@@ -25,8 +25,8 @@ const WATCH_URLS = (process.env.WATCH_URLS ?? "")
   .map((u) => u.trim())
   .filter(Boolean);
 
-const PRICE_SELECTOR = process.env.PRICE_SELECTOR ?? '[class*="price"]';
-const NAME_SELECTOR = process.env.NAME_SELECTOR ?? "h1";
+const PRICE_SELECTOR = process.env.PRICE_SELECTOR ?? '#current-price';
+const NAME_SELECTOR = process.env.NAME_SELECTOR ?? "#product-title";
 const PRICE_THRESHOLD = process.env.PRICE_THRESHOLD
   ? Number(process.env.PRICE_THRESHOLD)
   : null;
@@ -60,7 +60,7 @@ function appendCsv(row: string[]): void {
   const targetUrls =
     WATCH_URLS.length > 0
       ? WATCH_URLS
-      : ["https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"];
+      : ["https://maru0014.github.io/playwright-rpa/price.html"];
 
   console.log(`[price-monitor] 監視対象: ${targetUrls.length}件`);
 

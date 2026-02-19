@@ -51,8 +51,7 @@ interface HealthResult {
     MONITOR_URLS.length > 0
       ? MONITOR_URLS
       : [
-          "https://example.com",
-          "https://playwright.dev",
+          "https://maru0014.github.io/playwright-rpa/health.html",
         ];
 
   console.log(`[health-check] 監視対象: ${targetUrls.length}件`);

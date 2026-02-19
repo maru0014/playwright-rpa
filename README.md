@@ -8,7 +8,7 @@ GitHub Actions の**無料枠**で動く Playwright ブラウザ自動操作（R
 | # | パターン | 内容 | トリガー |
 |:---:|:--------|:-----|:-------:|
 | 1 | 🛒 **価格監視Bot** | 商品ページを毎日巡回し価格をCSV記録。閾値以下でSlack/Discord通知 | 毎日 AM9:00 |
-| 2 | 🟢 **サイト死活監視** | URLのHTTPステータス・レスポンスタイムを15分ごとにチェック | 15分ごと |
+| 2 | 🟢 **サイト死活監視** | URLのHTTPステータス・レスポンスタイムを1時間ごとにチェック | 1時間ごと |
 | 3 | 📝 **フォーム自動入力** | GitHubのIssue作成フォームをブラウザ操作で自動入力するデモ | 手動実行 |
 
 ---
@@ -19,7 +19,7 @@ GitHub Actions の**無料枠**で動く Playwright ブラウザ自動操作（R
 
 ```bash
 # クローン後ローカルで試す場合
-git clone https://github.com/<your-username>/playwright-rpa.git
+git clone https://github.com/maru0014/playwright-rpa.git
 cd playwright-rpa
 npm install
 npx playwright install chromium
@@ -51,13 +51,7 @@ npx playwright install chromium
 
 #### パターン3: フォーム自動入力
 
-| Secret名 | 説明 | 例 |
-|---------|-----|-----|
-| `RPA_GITHUB_EMAIL` | GitHub ログイン用メールアドレス | `your@email.com` |
-| `RPA_GITHUB_PASSWORD` | GitHub パスワード | `your-password` |
-
-> [!WARNING]
-> パターン3でログインパスワードを使う場合は、**RPA 専用のサブアカウントを作成することを強く推奨します。**
+Secretsへの追加設定は不要です。
 
 ### 3. ワークフローを有効化
 
@@ -80,18 +74,14 @@ npx playwright install chromium
 
 ```bash
 # パターン1: 価格監視
-WATCH_URLS="https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html" \
+WATCH_URLS="https://maru0014.github.io/playwright-rpa/price.html" \
 npm run rpa:price-monitor
 
 # パターン2: 死活監視
-MONITOR_URLS="https://example.com,https://playwright.dev" \
+MONITOR_URLS="https://maru0014.github.io/playwright-rpa/health.html" \
 npm run rpa:health-check
 
 # パターン3: フォーム自動入力（DRY RUN）
-GITHUB_REPO_OWNER="your-username" \
-GITHUB_REPO_NAME="playwright-rpa" \
-GITHUB_LOGIN_EMAIL="your@email.com" \
-GITHUB_LOGIN_PASSWORD="your-password" \
 DRY_RUN="true" \
 npm run rpa:form-automation
 ```

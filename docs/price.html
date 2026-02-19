@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Smartwatch Pro - EC Store Demo</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 30px;
+    }
+    .product-image {
+      flex: 1;
+      background: #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 5rem;
+      min-height: 300px;
+    }
+    .product-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .product-name {
+      font-size: 1.8rem;
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .price-container {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-left: 4px solid #e74c3c;
+      border-radius: 4px;
+    }
+    .price-label {
+      font-size: 0.9rem;
+      color: #7f8c8d;
+      margin-bottom: 5px;
+    }
+    .product-price {
+      font-size: 2.5rem;
+      color: #e74c3c;
+      font-weight: bold;
+      margin: 0;
+    }
+    .stock-status {
+      color: #27ae60;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .btn-cart {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .btn-cart:hover {
+      background: #2980b9;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: #7f8c8d;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Demo EC Store</h2>
+  </header>
+  <div class="container">
+    <div class="product-image">⌚</div>
+    <div class="product-details">
+      <h1 class="product-name" id="product-title">Premium Smartwatch Pro</h1>
+      <p>心拍数モニター、GPS内蔵、水深50m防水機能を搭載した次世代スマートウォッチ。毎日の健康管理とアクティビティをもっとスマートに。</p>
+
+      <div class="price-container">
+        <div class="price-label">特別セール価格</div>
+        <p class="product-price" id="current-price">¥1,980</p>
+      </div>
+
+      <div class="stock-status">✓ 在庫あり (残りわずか)</div>
+      <button class="btn-cart">カートに入れる</button>
+    </div>
+  </div>
+  <a href="index.html" class="back-link">← ポータルトップへ戻る</a>
+
+  <script>
+    // デモ用：ページ読み込み時にランダムで価格を変動させる（1500円〜2500円）
+    // （実際のデモでは固定の方が安定しますが、変動してWebhookが飛ぶデモ用）
+    document.addEventListener("DOMContentLoaded", () => {
+      // RPAの安定動作のため、本家デモでは固定値（Thresholdをわざと上回る/下回る）にするのもありですが
+      // 今回は一旦固定値(1980)にしておき、RPA側で Threshold=2000 とすれば必ず通知が飛ぶ設定とします。
+      // const randomPrice = Math.floor(Math.random() * 10) * 100 + 1500;
+      // document.getElementById('current-price').textContent = `¥${randomPrice.toLocaleString()}`;
+    });
+  </script>
+</body>
+</html>

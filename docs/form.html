@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Form Demo</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 40px 20px;
+      color: #1c1e21;
+    }
+    .form-container {
+      background: white;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+      margin-top: 0;
+      color: #1877f2;
+      text-align: center;
+      font-size: 1.8rem;
+    }
+    p.desc {
+      text-align: center;
+      color: #65676b;
+      margin-bottom: 30px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #444;
+    }
+    input[type="text"],
+    input[type="email"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccd0d5;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #1877f2;
+      box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    .btn-submit {
+      background-color: #1877f2;
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 6px;
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .btn-submit:hover {
+      background-color: #166fe5;
+    }
+    .success-message {
+      display: none;
+      background-color: #e7f3ff;
+      border: 1px solid #1877f2;
+      color: #1877f2;
+      padding: 20px;
+      border-radius: 6px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 30px;
+      color: #65676b;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container" id="form-wrapper">
+    <h1>お問い合わせフォーム</h1>
+    <p class="desc">RPA（Playwright）による自動入力・送信デモ用のダミーフォームです。実際にメールは送信されません。</p>
+
+    <form id="demo-form">
+      <div class="form-group">
+        <label for="company">会社名</label>
+        <input type="text" id="company" name="company" placeholder="例: 株式会社サンプル">
+      </div>
+
+      <div class="form-group">
+        <label for="name">お名前 <span style="color:red">*</span></label>
+        <input type="text" id="name" name="name" required placeholder="例: 山田 太郎">
+      </div>
+
+      <div class="form-group">
+        <label for="email">メールアドレス <span style="color:red">*</span></label>
+        <input type="email" id="email" name="email" required placeholder="例: yamada@example.com">
+      </div>
+
+      <div class="form-group">
+        <label for="category">お問い合わせ種別</label>
+        <select id="category" name="category">
+          <option value="inquiry">サービスについて</option>
+          <option value="support">テクニカルサポート</option>
+          <option value="billing">お支払いについて</option>
+          <option value="other">その他</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="message">お問い合わせ内容 <span style="color:red">*</span></label>
+        <textarea id="message" name="message" required placeholder="質問内容やご要望を入力してください。"></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submit-button">送信する</button>
+    </form>
+
+    <div id="success-msg" class="success-message">
+      <h3>✓ 送信完了</h3>
+      <p>お問い合わせを受け付けました。自動入力デモは成功です！</p>
+    </div>
+  </div>
+
+  <a href="index.html" class="back-link">← ポータルトップへ戻る</a>
+
+  <script>
+    document.getElementById('demo-form').addEventListener('submit', function(e) {
+      e.preventDefault(); // 実際の送信をブロック
+
+      // 送信ボタンを無効化して処理中を演出
+      const btn = document.getElementById('submit-button');
+      btn.textContent = '送信中...';
+      btn.disabled = true;
+
+      // ワンテンポ遅れて成功画面を表示
+      setTimeout(() => {
+        document.getElementById('demo-form').style.display = 'none';
+        document.getElementById('success-msg').style.display = 'block';
+
+        // URLハッシュを追加（RPAが画面遷移を検知しやすくするため）
+        window.location.hash = 'success';
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

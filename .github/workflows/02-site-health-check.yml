@@ -1,9 +1,9 @@
 name: "パターン2: サイト死活監視"
 
 on:
-  # 15分ごとに自動実行
+  # 1時間ごとに自動実行
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "0 * * * *"
   # 手動実行も可能
   workflow_dispatch:
     inputs:
