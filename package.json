@@ -1,0 +1,23 @@
+{
+  "name": "playwright-rpa",
+  "version": "1.0.0",
+  "description": "GitHub Actions × Playwright で無料RPAを実現するサンプルリポジトリ",
+  "scripts": {
+    "rpa:price-monitor": "ts-node scripts/01-price-monitor.ts",
+    "rpa:health-check": "ts-node scripts/02-site-health-check.ts",
+    "rpa:form-automation": "ts-node scripts/03-form-automation.ts",
+    "install:browsers": "playwright install chromium"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.50.1",
+    "playwright": "^1.50.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

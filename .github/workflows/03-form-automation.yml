@@ -1,0 +1,65 @@
+name: "パターン3: フォーム自動入力"
+
+on:
+  # GitHub UIから手動実行。パラメータを入力してトリガー。
+  workflow_dispatch:
+    inputs:
+      issue_title:
+        description: "作成するIssueのタイトル"
+        required: true
+        default: "[RPA自動作成] テストIssue"
+      issue_body:
+        description: "作成するIssueの本文"
+        required: false
+        default: "このIssueはPlaywright × GitHub ActionsによるRPAデモで自動作成されました。"
+      dry_run:
+        description: "DRY RUN（trueにすると入力のみ・送信しない）"
+        type: boolean
+        default: true
+
+jobs:
+  form-automation:
+    name: フォーム自動入力
+    runs-on: ubuntu-latest
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Node.js 20 をセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 依存パッケージをインストール
+        run: npm ci
+
+      - name: Playwright Chromium をインストール
+        run: npx playwright install chromium --with-deps
+
+      - name: 結果ディレクトリを作成
+        run: mkdir -p results/screenshots
+
+      - name: フォーム自動入力スクリプトを実行
+        env:
+          # GitHub ログイン情報（Secrets に設定）
+          GITHUB_LOGIN_EMAIL: ${{ secrets.RPA_GITHUB_EMAIL }}
+          GITHUB_LOGIN_PASSWORD: ${{ secrets.RPA_GITHUB_PASSWORD }}
+          # 対象リポジトリ（このリポジトリ自身に作成）
+          GITHUB_REPO_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPO_NAME: ${{ github.event.repository.name }}
+          # workflow_dispatch の入力値
+          ISSUE_TITLE: ${{ inputs.issue_title }}
+          ISSUE_BODY: ${{ inputs.issue_body }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: npx ts-node scripts/03-form-automation.ts
+
+      - name: 実行結果のスクリーンショットをArtifactとして保存（30日間）
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: form-automation-results-${{ github.run_number }}
+          path: results/screenshots/
+          retention-days: 30

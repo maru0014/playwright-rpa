@@ -1,0 +1,57 @@
+name: "パターン2: サイト死活監視"
+
+on:
+  # 15分ごとに自動実行
+  schedule:
+    - cron: "*/15 * * * *"
+  # 手動実行も可能
+  workflow_dispatch:
+    inputs:
+      monitor_urls:
+        description: "監視対象URL（カンマ区切り）- 省略時はデモURLを使用"
+        required: false
+      response_time_threshold:
+        description: "レスポンスタイム警告閾値（ms）"
+        required: false
+        default: "5000"
+
+jobs:
+  health-check:
+    name: 死活監視
+    runs-on: ubuntu-latest
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Node.js 20 をセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 依存パッケージをインストール
+        run: npm ci
+
+      - name: Playwright Chromium をインストール
+        run: npx playwright install chromium --with-deps
+
+      - name: 結果ディレクトリを作成
+        run: mkdir -p results/screenshots
+
+      - name: 死活監視スクリプトを実行
+        env:
+          MONITOR_URLS: ${{ inputs.monitor_urls || secrets.MONITOR_URLS }}
+          RESPONSE_TIME_THRESHOLD: ${{ inputs.response_time_threshold || '5000' }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: npx ts-node scripts/02-site-health-check.ts
+
+      - name: 実行結果をArtifactとして保存（7日間）
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: health-check-results-${{ github.run_number }}
+          path: |
+            results/health-report.json
+            results/screenshots/
+          retention-days: 7

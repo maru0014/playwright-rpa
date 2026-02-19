@@ -1,0 +1,58 @@
+name: "パターン1: 価格監視Bot"
+
+on:
+  # 毎日 UTC 00:00 = JST 09:00 に自動実行
+  schedule:
+    - cron: "0 0 * * *"
+  # GitHub UIから手動実行も可能
+  workflow_dispatch:
+    inputs:
+      watch_urls:
+        description: "監視対象URL（カンマ区切り）- 省略時はデモURLを使用"
+        required: false
+      price_threshold:
+        description: "価格アラート閾値（円）- この金額以下で通知"
+        required: false
+        default: "2000"
+
+jobs:
+  price-monitor:
+    name: 価格監視
+    runs-on: ubuntu-latest
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Node.js 20 をセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 依存パッケージをインストール
+        run: npm ci
+
+      - name: Playwright Chromium をインストール
+        run: npx playwright install chromium --with-deps
+
+      - name: 結果ディレクトリを作成
+        run: mkdir -p results/screenshots
+
+      - name: 価格監視スクリプトを実行
+        env:
+          # Secretsから取得（未設定の場合はデモURLを使用）
+          WATCH_URLS: ${{ inputs.watch_urls || secrets.WATCH_URLS }}
+          PRICE_THRESHOLD: ${{ inputs.price_threshold || secrets.PRICE_THRESHOLD || '2000' }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: npx ts-node scripts/01-price-monitor.ts
+
+      - name: 実行結果をArtifactとして保存（30日間）
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: price-monitor-results-${{ github.run_number }}
+          path: |
+            results/prices.csv
+            results/screenshots/
+          retention-days: 30

@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.env
+.env.local
+
+# 実行結果（Artifactとして保存するが、Gitには入れない）
+results/prices.csv
+results/health-report.json
+results/screenshots/
+results/test-results/
+
+# macOS
+.DS_Store
+
+# エディタ
+.vscode/
+.idea/
+*.swp
+
+# TypeScriptビルド成果物
+*.js.map
