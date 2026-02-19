@@ -54,10 +54,16 @@ const SCREENSHOTS_DIR = path.join(RESULTS_DIR, "screenshots");
   if (!REPO_NAME) missingVars.push("GITHUB_REPO_NAME");
 
   if (missingVars.length > 0) {
-    console.error(
+    console.warn(
       `[form-automation] 以下の環境変数が設定されていません: ${missingVars.join(", ")}`
     );
-    console.log("[form-automation] デモモード: ログインページのスクリーンショットのみ取得します。");
+    console.log("[form-automation] 認証情報が未設定のためスキップします。Secretsを設定してください。");
+    await notify({
+      title: "⚠️ フォーム自動入力 スキップ",
+      message: `必須の環境変数が設定されていないためスキップしました: ${missingVars.join(", ")}`,
+      status: "warning",
+    });
+    process.exit(0);
   }
 
   console.log(`[form-automation] DRY_RUN: ${DRY_RUN}`);
@@ -105,10 +111,13 @@ const SCREENSHOTS_DIR = path.join(RESULTS_DIR, "screenshots");
 
       // ── Step 3: フォーム入力 ────────────────────────────────────────────────
       console.log("[form-automation] Step 3: フォームに入力中...");
-      await page.fill('[name="issue[title]"]', ISSUE_TITLE);
-      // GitHub の Issue 本文エディターは CodeMirror を使用しているため textarea に直接入力
-      await page.locator(".CodeMirror-code").first().click();
-      await page.keyboard.type(ISSUE_BODY);
+      // GitHub 新UI対応: issue[title] セレクターは ID or name 属性で取得
+      await page.waitForSelector('#issue_title, [name="issue[title]"]', { timeout: 15000 });
+      await page.fill('#issue_title, [name="issue[title]"]', ISSUE_TITLE);
+      // GitHub の Issue 本文: 新UIでは <textarea name="issue[body]"> を使用
+      const bodyLocator = page.locator('textarea[name="issue[body]"]').first();
+      await bodyLocator.click();
+      await bodyLocator.fill(ISSUE_BODY);
 
       // 入力後スクリーンショット
       await page.screenshot({
@@ -120,7 +129,8 @@ const SCREENSHOTS_DIR = path.join(RESULTS_DIR, "screenshots");
       // ── Step 4: 送信（DRY_RUN=false の場合のみ）─────────────────────────────
       if (!DRY_RUN) {
         console.log("[form-automation] Step 4: Issueを送信中...");
-        await page.click('[data-disable-with="Submitting\u2026"]');
+        // GitHub 新UI対応: プライマリボタン（Submit new issue）をクリック
+        await page.click('button.btn-primary[type="submit"], [data-disable-with]');
         // Issue 詳細ページへのリダイレクトを待つ
         await page.waitForURL(/\/issues\/\d+$/, { timeout: 15000 });
 
